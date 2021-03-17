@@ -1,9 +1,12 @@
-from crawler_world import get_page, all_offers_links, Car, cars_list
+from crawler_world import get_page, all_offers_links, Car, cars_list, assemble_url_page, page_not_found
 
 
 def crawler():
-    print('Hello to the Otomoto Crawler.\n Example address: https://www.otomoto.pl/osobowe/volkswagen/caravelle/')
-    url = input('Please give a URL search address from Otomoto page: ')
+    print('Hello to the Otomoto Crawler.\n\nExample input: volkswagen\tgolf')
+    url = assemble_url_page()
+    while page_not_found(url):
+        print('Page not found!\nPlease try again!')
+        url = assemble_url_page()
     bs = get_page(url)
     links = all_offers_links(bs, url)
     print(f'Number of offers found: {len(links)}.\nAnalyzing offers...')
@@ -14,10 +17,9 @@ if __name__ == '__main__':
     data = crawler()
     expired_counter = 0
     for car in data:
-        if car == 'Expired':
+        if car is None:
             expired_counter += 1
             continue
         print(dir(car))
-    print(f'Number of expired offers: {expired_counter}')
-
+    print(f'Number of offers expired during runtime: {expired_counter}')
 
